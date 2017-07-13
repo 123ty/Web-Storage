@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web存储 简易留言板</title>
+    <style>
+        textarea{
+            width:350px;
+            height:150px;
+        }
+        table{
+            border-collapse:collapse;
+        }
+        table tr td{
+            width:250px;
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+<h2>客户端留言板</h2>
+<textarea name="message" id="message" cols="30" rows="10"></textarea><br/><br/>
+<button onclick="addMessage()">添加留言</button>
+<button onclick="clearMessage()">清除留言</button>
+<hr>
+<table border="1">
+    <thead>
+    <tr>
+        <td>留言内容</td>
+        <td>留言时间</td>
+    </tr>
+    </thead>
+    <tbody id="show"></tbody>
+</table>
+<script type="text/javascript">
+    //加载留言信息
+    function updateMessage(){
+        var show = document.getElementById("show");
+        show.innerHTML = "";
+        for(var i = 0;i < localStorage.length;i++){
+            var key = localStorage.key(i);
+            var date = new Date();
+            date.setTime(key);
+            var value = localStorage.getItem(key);//留言内容
+            var dateStr = date.toLocaleString();
+//            //创建第一行
+//            var oTr = document.createElement("tr");
+//            show.appendChild(oTr);
+//            //创建第一列
+//            var oTd = document.createElement("td");
+//            oTd.innerHTML = value;
+//            oTr.appendChild(oTd);
+//            //创建第二列
+//            var oTd = document.createElement("td");
+//            oTd.innerHTML = date.toLocaleString();
+//            oTr.appendChild(oTd);
+            var row = show.insertRow(i);
+            row.insertCell(0).innerHTML = value;
+            row.insertCell(1).innerHTML = dateStr;
+        }
+    }
+    function addMessage(){
+        var message = document.getElementById("message");
+        var LStorage = window.localStorage;
+        var time = new Date().getTime();
+        var value = message.value;
+        LStorage.setItem(time,value);//以当前时间为key来保存留言信息
+        message.value = "";
+        updateMessage();
+        alert("留言信息已保存！");
+    }
+    function clearMessage(){
+        var LStorage = window.localStorage;
+        LStorage.clear();
+        updateMessage();
+        alert("留言信息已被清除！");
+    }
+</script>
+</body>
+</html>
+
+<!--
+  getTime()方法：返回距1970年1月1日之间的毫秒数。
+  setTime()方法：设置距离1970年1月1日的毫秒数，并显示新的日期和时间。
+-->

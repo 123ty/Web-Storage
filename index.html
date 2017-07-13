@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>客户端留言板</title>
+    <style>
+        table{
+            border-collapse:collapse;
+        }
+        table tr td{
+            width:220px;
+        }
+    </style>
+</head>
+<body>
+<h2>客户端留言板</h2>
+留言标题：<input type="text" id="title" name="title"/><br/><br/>
+留言内容：<textarea name="content" id="content" cols="30" rows="10"></textarea><br/><br/>
+留言人：<input type="text" id="user" name="user"/><br/><br/>
+<button onclick="addMessage()">添加留言</button>
+<button onclick="clearMessage()">清除留言</button>
+<hr/>
+<table border="1">
+    <thead>
+    <tr>
+        <td>留言标题</td>
+        <td>留言内容</td>
+        <td>留言用户</td>
+        <td>留言时间</td>
+    </tr>
+    </thead>
+    <tbody id="show"></tbody>
+</table>
+<script type="text/javascript">
+    //加载留言信息
+    function loadMessage(){
+        var show = document.getElementById("show");
+        show.innerHTML = "";
+        for(var i = 0;i < localStorage.length;i++){
+            var key = localStorage.key(i);
+            var date = new Date();
+            date.setTime(key);
+            var messageStr = localStorage.getItem(key);//获取留言信息
+            var dateStr = date.toLocaleString();//获取留言时间
+            var message = JSON.parse(messageStr);
+            var row = show.insertRow(i);
+            row.insertCell(0).innerHTML = message.title;
+            row.insertCell(1).innerHTML = message.content;
+            row.insertCell(2).innerHTML = message.user;
+            row.insertCell(3).innerHTML = dateStr;
+        }
+    }
+    //添加留言信息
+    function addMessage(){
+        var titleElement = document.getElementById("title");
+        var contentElement = document.getElementById("content");
+        var userElement = document.getElementById("user");
+        //将留言标题，留言内容，留言用户封装成JSON对象
+        var message= {
+            title:titleElement.value,
+            content:contentElement.value,
+            user:userElement.value
+        };
+        var time = new Date().getTime();
+        localStorage.setItem(time,JSON.stringify(message));
+        titleElement.value = "";
+        contentElement.value = "";
+        userElement.value = "";
+        alert("数据已保存！");
+        loadMessage();
+    }
+    function clearMessage(){
+        localStorage.clear();
+        alert("全部留言信息已被清除！");
+        loadMessage();
+    }
+</script>
+</body>
+</html>
+
+<!--
+   存储结构化数据：1.把结构化数据封装成JSON对象；2.把JSON对象转化字符串后再进行保存。JSON.stringify();
+   读取数据：1.读取JSON格式的字符串；2.把JSON格式的字符串转换为JSON对象；3.通过JSON对象属性来提取数据。JSON.parse();
+-->
